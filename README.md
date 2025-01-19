@@ -1,6 +1,6 @@
 # API de Gestão de Investimentos  
 
-![Java](https://img.shields.io/badge/Java-17-blue)  
+![Java](https://img.shields.io/badge/Java-21-blue)  
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0-green)  
 ![MySQL](https://img.shields.io/badge/MySQL-Docker-orange)  
 ![JUnit](https://img.shields.io/badge/Tests-JUnit-red)  
