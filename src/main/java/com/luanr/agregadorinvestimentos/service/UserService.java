@@ -11,6 +11,7 @@ import com.luanr.agregadorinvestimentos.repository.AccountRepository;
 import com.luanr.agregadorinvestimentos.repository.BillingAddressRepository;
 import com.luanr.agregadorinvestimentos.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,10 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final BillingAddressRepository billingAddressRepository;
-    public UserService(UserRepository userRepository, AccountRepository accountRepository, BillingAddressRepository billingAddressRepository) {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    public UserService(UserRepository userRepository, AccountRepository accountRepository, BillingAddressRepository billingAddressRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.billingAddressRepository = billingAddressRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public UUID createUser(CreateUserDto createUserDto) {
@@ -38,13 +41,14 @@ public class UserService {
                 null,
                 createUserDto.username(),
                 createUserDto.email(),
-                createUserDto.password(),
+                bCryptPasswordEncoder.encode(createUserDto.password()),
                 Instant.now(),
                 null
         );
         var userSaved = userRepository.save(Entity);
         return userSaved.getUser_id();
     }
+
     public Optional<User> getUser(String id){
         return userRepository.findById(UUID.fromString(id));
     }

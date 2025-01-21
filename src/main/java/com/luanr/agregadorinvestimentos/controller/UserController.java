@@ -7,6 +7,7 @@ import com.luanr.agregadorinvestimentos.dto.CreateUserDto;
 import com.luanr.agregadorinvestimentos.dto.UpdateUserDto;
 import com.luanr.agregadorinvestimentos.entity.User;
 import com.luanr.agregadorinvestimentos.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class UserController {
     }
 
     @GetMapping
+    @Transactional
     public ResponseEntity<List<User>> getAllUsers(){
         var users = userService.getAllUsers();
         return ResponseEntity.ok(users);

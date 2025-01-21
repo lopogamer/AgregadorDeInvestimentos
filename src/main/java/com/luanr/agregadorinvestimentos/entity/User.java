@@ -2,9 +2,11 @@ package com.luanr.agregadorinvestimentos.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.luanr.agregadorinvestimentos.dto.LoginRequest;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.List;
@@ -108,4 +110,7 @@ public class User {
         this.accounts = accounts;
     }
 
+    public boolean islogincorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder){
+        return passwordEncoder.matches(loginRequest.password(), this.password);
+    }
 }
