@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -42,14 +43,24 @@ public class User {
     @JsonIgnore
     private List<Account> accounts;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
 
-    public User(UUID user_id, String username, String email, String password, Instant created_at, Instant updated_at) {
+    private Set<Role> roles;
+
+
+    public User(UUID user_id, String username, String email, String password, Instant created_at, Instant updated_at, Set<Role> roles) {
         this.user_id = user_id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.created_at = created_at;
         this.updated_at = updated_at;
+        this.roles = roles;
     }
     public User(){}
 
@@ -108,6 +119,14 @@ public class User {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public boolean islogincorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder){

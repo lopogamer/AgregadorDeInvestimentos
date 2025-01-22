@@ -6,9 +6,11 @@ import com.luanr.agregadorinvestimentos.dto.CreateUserDto;
 import com.luanr.agregadorinvestimentos.dto.UpdateUserDto;
 import com.luanr.agregadorinvestimentos.entity.Account;
 import com.luanr.agregadorinvestimentos.entity.BillingAddress;
+import com.luanr.agregadorinvestimentos.entity.Role;
 import com.luanr.agregadorinvestimentos.entity.User;
 import com.luanr.agregadorinvestimentos.repository.AccountRepository;
 import com.luanr.agregadorinvestimentos.repository.BillingAddressRepository;
+import com.luanr.agregadorinvestimentos.repository.RoleRepository;
 import com.luanr.agregadorinvestimentos.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -28,11 +27,13 @@ public class UserService {
     private final AccountRepository accountRepository;
     private final BillingAddressRepository billingAddressRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    public UserService(UserRepository userRepository, AccountRepository accountRepository, BillingAddressRepository billingAddressRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    private final RoleRepository roleRepository;
+    public UserService(UserRepository userRepository, AccountRepository accountRepository, BillingAddressRepository billingAddressRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.billingAddressRepository = billingAddressRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     public UUID createUser(CreateUserDto createUserDto) {
@@ -43,7 +44,8 @@ public class UserService {
                 createUserDto.email(),
                 bCryptPasswordEncoder.encode(createUserDto.password()),
                 Instant.now(),
-                null
+                null,
+                Set.of(roleRepository.findById(Role.Values.BASIC.getRoleId()).orElseThrow())
         );
         var userSaved = userRepository.save(Entity);
         return userSaved.getUser_id();
